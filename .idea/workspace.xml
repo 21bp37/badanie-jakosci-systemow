@@ -5,14 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="40df5849-487f-4cbc-bac8-a64501fc679a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/tests/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/test_white_box.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Michalik-pyqt.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Michalik-pyqt.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/ui_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/ui_main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_white_box.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_white_box.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/logic.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/logic.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,10 +39,12 @@
   "keyToString": {
     "Python tests.Python tests for test_white_box.test_close_application.executor": "Run",
     "Python tests.Python tests for test_white_box.test_ctrl_v_functionality.executor": "Run",
+    "Python tests.Python tests for test_white_box.test_drag_and_drop.executor": "Run",
     "Python tests.Python tests for test_white_box.test_exit_button_behavior.executor": "Run",
     "Python tests.Python tests for test_white_box.test_keyPressEvent_logic.executor": "Run",
     "Python tests.Python tests for test_white_box.test_ui.executor": "Run",
     "Python tests.Python tests in test_white_box.py.executor": "Run",
+    "Python.logic.executor": "Run",
     "Python.main.executor": "Run",
     "Python.ui_main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -55,7 +52,34 @@
     "last_opened_file_path": "F:/Projekty/Laby/badanie-jakosci-syst"
   }
 }]]></component>
-  <component name="RunManager" selected="Python tests.Python tests for test_white_box.test_close_application">
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="F:\Projekty\Laby\badanie-jakosci-syst\tests" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python tests.Python tests for test_white_box.test_drag_and_drop">
+    <configuration name="logic" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Michalik-pyqt" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/views" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/views/logic.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="Python tests for test_white_box.test_close_application" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="Michalik-pyqt" />
       <option name="ENV_FILES" value="" />
@@ -71,7 +95,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_white_box.test_ctrl_v_functionality" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_white_box.test_drag_and_drop" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="Michalik-pyqt" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -82,7 +106,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_white_box.test_ctrl_v_functionality&quot;" />
+      <option name="_new_target" value="&quot;test_white_box.test_drag_and_drop&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -98,21 +122,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_white_box.test_exit_button_behavior&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for test_white_box.test_ui" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="Michalik-pyqt" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_white_box.test_ui&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -133,11 +142,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_white_box.test_drag_and_drop" />
+        <item itemvalue="Python.logic" />
         <item itemvalue="Python tests.Python tests for test_white_box.test_close_application" />
         <item itemvalue="Python tests.Python tests for test_white_box.test_exit_button_behavior" />
         <item itemvalue="Python tests.Python tests in test_white_box.py" />
-        <item itemvalue="Python tests.Python tests for test_white_box.test_ctrl_v_functionality" />
-        <item itemvalue="Python tests.Python tests for test_white_box.test_ui" />
       </list>
     </recent_temporary>
   </component>

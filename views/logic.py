@@ -66,3 +66,4 @@ class ImageData:
         if not self.colors:
             return QColor()
         return QColor(*self.colors[0])  # unpacks the first color
+
