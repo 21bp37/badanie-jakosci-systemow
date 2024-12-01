@@ -521,7 +521,10 @@ class UiMainWindow(QWidget):
 
     def __set_style_sheet(self) -> None:
         """A method that applies custom style sheet."""
-        with open('./assets/qss/style.qss', 'r', encoding='utf-8') as qss:
+        from pathlib import Path
+        project_root = Path(__file__).resolve().parents[1]
+        style_sheet_path = project_root / "assets" / "qss" / "style.qss"
+        with style_sheet_path.open('r', encoding='utf-8') as qss:
             self.setStyleSheet(qss.read())
 
     def __set_size_policy(self) -> None:
