@@ -18,7 +18,7 @@ class UI(QMainWindow):
             size = app.primaryScreen().size() * 0.6  # jakies skalowanie na ekranie
             self.resize(size)
         self.setMinimumSize(620, 344)  # min rozmiar jakis zeby sie nie rozkraczalo
-        self.ui = UiMainWindow(self)
+        self.ui:'UiMainWindow' = UiMainWindow(self)
         self.setCentralWidget(self.ui)
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
@@ -27,6 +27,10 @@ class UI(QMainWindow):
             print('Paste ui')
             self.ui.content.image_picker.paste()
 
+    def mousePressEvent(self, ev):
+        super().mousePressEvent(ev)
+        print('mousePressEvent')
+        # print(ev.pos())
 
 def main():
     app = QApplication(sys.argv)

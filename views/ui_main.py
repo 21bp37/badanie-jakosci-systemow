@@ -103,8 +103,8 @@ class ColorPicker(QWidget):
         """Resize event"""
         super().resizeEvent(event)
         w = int(self.picked_color_widget.width() - 24)
-        self.picked_color.setMinimumSize(w, min(w, self.height() - 90))  # keep scale and/or prevent overflow
-        self.picked_color.setMaximumSize(w, min(w, self.height() - 90))
+        self.picked_color.setMinimumSize(w, max(0, min(w, self.height() - 90)))  # keep scale and/or prevent overflow
+        self.picked_color.setMaximumSize(w, max(0, min(w, self.height() - 90)))
 
     def paintEvent(self, event: QPaintEvent) -> None:
         """
@@ -460,6 +460,7 @@ class Content(QWidget):
     @Slot(type(QColor))
     def pick_color(self, color: QColor):
         """Slot that is responsible for picked color"""
+        print(self.pos())
         rgb = color.red(), color.green(), color.blue()
         self.color_picker.update_color(*rgb)  # update picked color
 
