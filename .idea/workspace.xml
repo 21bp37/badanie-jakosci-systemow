@@ -6,8 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="40df5849-487f-4cbc-bac8-a64501fc679a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_white_box.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_white_box.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_black_box.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_black_box.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_real_white_box.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_real_white_box.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/logic.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/logic.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/views/ui_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/ui_main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -38,6 +40,18 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Python tests.Python tests for test_black_box.test_button_click.executor": "Run",
+    "Python tests.Python tests for test_black_box.test_ctrl_v_functionality.executor": "Run",
+    "Python tests.Python tests for test_black_box.test_drag_and_drop.executor": "Run",
+    "Python tests.Python tests for test_black_box.test_zoom_button_ui_change.executor": "Run",
+    "Python tests.Python tests for test_real_white_box.test_drag_enter_event.executor": "Run",
+    "Python tests.Python tests for test_real_white_box.test_image_color.executor": "Run",
+    "Python tests.Python tests for test_real_white_box.test_image_zoom.executor": "Run",
+    "Python tests.Python tests for test_real_white_box.test_key_press_paste_event.executor": "Run",
+    "Python tests.Python tests for test_real_white_box.test_load_image.executor": "Run",
+    "Python tests.Python tests for test_real_white_box.test_paste_image_from_clipboard.executor": "Run",
+    "Python tests.Python tests for test_real_white_box.test_paste_image_from_url.executor": "Run",
+    "Python tests.Python tests for test_real_white_box.test_resize.executor": "Run",
     "Python tests.Python tests for test_white_box.test_button_click.executor": "Run",
     "Python tests.Python tests for test_white_box.test_click_on_image_picker.executor": "Run",
     "Python tests.Python tests for test_white_box.test_close_application.executor": "Run",
@@ -51,6 +65,7 @@
     "Python tests.Python tests for test_white_box.test_invalid_file_drag_and_drop_memory.executor": "Run",
     "Python tests.Python tests for test_white_box.test_keyPressEvent_logic.executor": "Run",
     "Python tests.Python tests for test_white_box.test_ui.executor": "Run",
+    "Python tests.Python tests in test_real_white_box.py.executor": "Run",
     "Python tests.Python tests in test_white_box.py.executor": "Run",
     "Python.logic.executor": "Run",
     "Python.main.executor": "Run",
@@ -65,7 +80,7 @@
       <recent name="F:\Projekty\Laby\badanie-jakosci-syst\tests" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_white_box.test_button_click">
+  <component name="RunManager" selected="Python tests.Python tests for test_real_white_box.test_image_zoom">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Michalik-pyqt" />
       <option name="ENV_FILES" value="" />
@@ -88,7 +103,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_white_box.test_button_click" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_real_white_box.test_image_zoom" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="Michalik-pyqt" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -99,11 +114,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_white_box.test_button_click&quot;" />
+      <option name="_new_target" value="&quot;test_real_white_box.test_image_zoom&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_white_box.test_click_on_image_picker" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_real_white_box.test_key_press_paste_event" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="Michalik-pyqt" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -114,11 +129,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_white_box.test_click_on_image_picker&quot;" />
+      <option name="_new_target" value="&quot;test_real_white_box.test_key_press_paste_event&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_white_box.test_color_palette_update_on_click" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_real_white_box.test_paste_image_from_clipboard" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="Michalik-pyqt" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -129,11 +144,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_white_box.test_color_palette_update_on_click&quot;" />
+      <option name="_new_target" value="&quot;test_real_white_box.test_paste_image_from_clipboard&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests in test_white_box.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_real_white_box.test_paste_image_from_url" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="Michalik-pyqt" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -144,17 +159,17 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/tests/test_white_box.py&quot;" />
-      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <option name="_new_target" value="&quot;test_real_white_box.test_paste_image_from_url&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for test_white_box.test_button_click" />
-        <item itemvalue="Python tests.Python tests in test_white_box.py" />
-        <item itemvalue="Python tests.Python tests for test_white_box.test_color_palette_update_on_click" />
+        <item itemvalue="Python tests.Python tests for test_real_white_box.test_image_zoom" />
         <item itemvalue="Python.main" />
-        <item itemvalue="Python tests.Python tests for test_white_box.test_click_on_image_picker" />
+        <item itemvalue="Python tests.Python tests for test_real_white_box.test_paste_image_from_url" />
+        <item itemvalue="Python tests.Python tests for test_real_white_box.test_paste_image_from_clipboard" />
+        <item itemvalue="Python tests.Python tests for test_real_white_box.test_key_press_paste_event" />
       </list>
     </recent_temporary>
   </component>

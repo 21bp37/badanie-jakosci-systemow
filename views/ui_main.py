@@ -151,6 +151,7 @@ class ImagePicker(QWidget):
 
     def dragEnterEvent(self, event: QDragEnterEvent):
         """Accept file"""
+        print("dragenter")
         if event.mimeData().hasUrls() or event.mimeData().hasImage:
             event.acceptProposedAction()
 
@@ -185,8 +186,10 @@ class ImagePicker(QWidget):
 
     def zoom_in(self, click_position):
         # Get the coordinates of the click
+        print("zoom-in")
         x = click_position.x()
         y = click_position.y()
+        print(x, y)
 
         # Map the coordinates to the pixmap's coordinate system
         scaled_pixmap = self.pixmap
@@ -219,10 +222,14 @@ class ImagePicker(QWidget):
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         """Pick color on mouse release"""
         super().mouseReleaseEvent(event)
+        print("mouse release")
         # return if there's no pixmap or event wasn't caused by mouse left click
         if not self.pixmap:
             return
         #zooming in
+        print(event.pos())
+        print(self.clicked_zoom)
+        print(self.zoomed_in)
         if self.clicked_zoom and not self.zoomed_in:
             self.zoom_in(event.pos())
             self.zoomed_in = True
@@ -443,11 +450,12 @@ class ZoomWidget(QWidget):
         self.repaint()
     
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
+        print("click zoom")
         if self.clicked_zoom:
             self.clicked_zoom = False
         else:
             self.clicked_zoom = True
-
+        print(self.clicked_zoom)
     
     def paintEvent(self, event: QPaintEvent) -> None:
         """
@@ -475,7 +483,7 @@ class ZoomImage(QWidget):
         self.zoom.setCursor(QtCore.Qt.PointingHandCursor)
         self.zoom.setMinimumHeight(85)
         self.zoom.setMinimumWidth(85)
-
+        self.image = None
         self.zoom.helper_size = 10
         
 

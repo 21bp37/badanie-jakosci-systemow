@@ -1,15 +1,26 @@
+import os
+from unittest import mock
+
 import pytest
 
-
+from main import UI
 from views import ImageData
 from PySide6 import QtWidgets, QtCore, QtGui
-from PySide6.QtCore import QUrl
-from PySide6.QtGui import QKeyEvent, Qt
+from PySide6.QtCore import QUrl, QMimeData, QPoint
+from PySide6.QtGui import QKeyEvent, Qt, QDragEnterEvent, QImage
 from PySide6.QtWidgets import QApplication, QPushButton
 
 from PySide6.QtGui import QPixmap, QColor
 
 app = QApplication()
+
+
+@pytest.fixture
+def test_ui(qtbot) -> 'UI':
+    ui = UI()
+    qtbot.addWidget(ui)
+    return ui
+
 
 @pytest.mark.parametrize("r, g, b", [
     (0, 0, 0),
@@ -25,25 +36,27 @@ def test_imageData_get_colors_single_color_pixmap(r, g, b):
     assert len(colors) == 1
     assert colors[0] == [r, g, b]
 
+
 @pytest.mark.parametrize("imagePath, output", [
-    ('./tests/test_image_360x360.png', [[0, 255, 0], [255, 0, 0], [0, 0, 255 ]]),
-     
+    ('./tests/test_image_360x360.png', [[0, 255, 0], [255, 0, 0], [0, 0, 255]]),
+
 ])
 def test_imageData_get_colors_pixmap_from_file(imagePath, output):
     pixmap = QPixmap(imagePath)
-    assert pixmap.isNull() == False
+    assert pixmap.isNull() is False
     imageData = ImageData(pixmap)
     colors = imageData.get_colors()
     assert len(colors) == len(output)
     for color in zip(colors, output):
         assert color[0] == color[1]
 
+
 @pytest.mark.parametrize("input, output", [
     ('000000', 'FFFFFF'),
     ('012345', 'FEDCBA'),
-    ('798650', '8679AF'), 
-    ('', ''), 
-    ('0', 'F'), 
+    ('798650', '8679AF'),
+    ('', ''),
+    ('0', 'F'),
     ('FFFFFFFFFFFF', '000000000000'),
 ])
 def test_imageData_get_colors_pixmap_from_file(input, output):
@@ -52,6 +65,7 @@ def test_imageData_get_colors_pixmap_from_file(input, output):
 
     inversedOutput = ImageData.invert_color(output)
     assert inversedOutput == input
+
 
 @pytest.mark.parametrize(
     "r, g, b, output",
@@ -68,3 +82,113 @@ def test_imageData_get_colors_pixmap_from_file(input, output):
 def test_luminance_color(r, g, b, output):
     result = ImageData.luminance_color(r, g, b)
     assert result == output
+
+
+def test_load_image(test_ui, qtbot):
+    qtbot.wait_exposed(test_ui.ui)
+    assert test_ui.ui.content.image_picker.load_image("unknown_path") is False
+    test_image_path = os.path.join(os.path.dirname(__file__), "test_image_palette.png")
+    assert test_ui.ui.content.image_picker.load_image(test_image_path) is True
+    test_image_path = os.path.join(os.path.dirname(__file__), "not_a_file.txt")
+    assert test_ui.ui.content.image_picker.load_image(test_image_path) is False
+    test_image_path = os.path.join(os.path.dirname(__file__), "test_real_white_box.py")
+    assert test_ui.ui.content.image_picker.load_image(test_image_path) is False
+
+
+def test_image_color(test_ui, qtbot):
+    qtbot.wait_exposed(test_ui.ui)
+    test_image_path = os.path.join(os.path.dirname(__file__), "test_image_palette.png")
+    test_image_path = test_image_path
+    test_ui.ui.content.image_picker.load_image(test_image_path)
+    assert test_ui.ui.content.color_picker.picked_color.background == "#008000"
+
+
+@pytest.mark.parametrize("width, height", [
+    (100, 100),
+    (621, 345),
+    (2137, 2137),
+    (621, 3232),
+    (3232, 432),
+])
+def test_resize(test_ui, width, height):
+    test_ui.resize(width, height)
+    assert test_ui.size().width() == max(620, width)
+    assert test_ui.size().height() == max(344, height)
+
+
+def test_drag_enter_event(test_ui, qtbot):
+    mime_data = QMimeData()
+    test_image_path = os.path.join(os.path.dirname(__file__), "test_image_palette.png")
+    url = QUrl.fromLocalFile(test_image_path)
+    mime_data.setUrls([url])
+    event = QDragEnterEvent(QPoint(1, 1), Qt.CopyAction, mime_data, Qt.LeftButton, Qt.NoModifier)
+    test_ui.ui.content.image_picker.dragEnterEvent(event)
+    assert event.isAccepted()
+    with mock.patch.object(test_ui.ui.content.image_picker, "dragEnterEvent") as mock_drag_event:
+        test_ui.ui.content.image_picker.dragEnterEvent(event)
+        mock_drag_event.assert_called_once_with(event)
+
+
+def test_paste_event(test_ui, qtbot):
+    mime_data = QMimeData()
+    test_image_path = os.path.join(os.path.dirname(__file__), "test_image_palette.png")
+    url = QUrl.fromLocalFile(test_image_path)
+    mime_data.setUrls([url])
+    event = QDragEnterEvent(QPoint(1, 1), Qt.CopyAction, mime_data, Qt.LeftButton, Qt.NoModifier)
+    test_ui.ui.content.image_picker.dragEnterEvent(event)
+    assert event.isAccepted()
+    with mock.patch.object(test_ui.ui.content.image_picker, "dragEnterEvent") as mock_drag_event:
+        test_ui.ui.content.image_picker.dragEnterEvent(event)
+        mock_drag_event.assert_called_once_with(event)
+
+
+def test_paste_image_from_clipboard(test_ui, qtbot):
+    image_picker = test_ui.ui.content.image_picker
+    image_path = os.path.join(os.path.dirname(__file__), "test_image_360x360.png")
+    image = QImage(image_path)
+    clipboard = QApplication.clipboard()
+    clipboard.setImage(image)
+    event = QKeyEvent(QKeyEvent.KeyPress, Qt.Key_V, Qt.ControlModifier)
+    test_ui.keyPressEvent(event)
+    assert image_picker.pixmap is not None
+    assert image_picker.pixmap.toImage() == image
+
+
+def test_paste_image_from_url(test_ui, qtbot):
+    image_picker = test_ui.ui.content.image_picker
+    image_path = os.path.join(os.path.dirname(__file__), "test_image_360x360.png")
+    url = QUrl.fromLocalFile(image_path)
+    clipboard = QApplication.clipboard()
+    mime_data = QMimeData()
+    mime_data.setUrls([url])
+    clipboard.setMimeData(mime_data)
+    # clipboard.mimeData().setUrls([image_path])
+    event = QKeyEvent(QKeyEvent.KeyPress, Qt.Key_V, Qt.ControlModifier)
+    test_ui.keyPressEvent(event)
+    assert image_picker.pixmap is not None
+    assert image_picker.pixmap.toImage() == QImage(image_path)
+
+
+def test_image_zoom(test_ui, qtbot):
+    qtbot.wait_exposed(test_ui.ui)
+    test_image_path = os.path.join(os.path.dirname(__file__), "test_image_360x360.png")
+    test_image_path = test_image_path
+    test_ui.ui.content.image_picker.load_image(test_image_path)
+    zoom_btn = test_ui.ui.content.zoom_image.zoom
+    qtbot.mousePress(zoom_btn, QtCore.Qt.LeftButton)
+    qtbot.mouseRelease(zoom_btn, QtCore.Qt.LeftButton)
+    test_ui.ui.content.update()
+    test_ui.ui.content.repaint()
+    image_picker = test_ui.ui.content.image_picker
+    test_ui.ui.content.image_picker.clicked_zoom = True
+    point = QPoint(139, 6)
+    qtbot.mousePress(image_picker, QtCore.Qt.LeftButton, pos=point)
+    qtbot.mouseRelease(image_picker, QtCore.Qt.LeftButton, pos=point)
+    test_ui.ui.content.image_picker.zoom_in(point)
+    assert test_ui.ui.content.color_picker.picked_color.background == "#00ff00"
+
+# with mock.patch.object(test_ui.ui.content, "image_picker") as mock_picker:
+#     mock_picker.paste = mock.MagicMock()
+#     event = QKeyEvent(QKeyEvent.KeyPress, Qt.Key_V, Qt.ControlModifier)
+#     test_ui.keyPressEvent(event)
+#     mock_picker.paste.assert_called_once()
