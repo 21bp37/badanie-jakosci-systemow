@@ -13,6 +13,8 @@ from PySide6.QtWidgets import QApplication, QPushButton
 from PySide6.QtGui import QPixmap, QColor
 
 app = QApplication()
+
+
 # app.setAttribute(Qt.AA_DisableHighDpiScaling)
 # app.setAttribute(Qt.AA_UseSoftwareOpenGL)
 # app.setQuitOnLastWindowClosed(False)
@@ -297,3 +299,19 @@ def test_pick_color(test_ui, qtbot):
     picker.mouseReleaseEvent(event)
     assert color.picked_color.background == "#ff0000"
 
+
+def test_pick_color_name(test_ui, qtbot):
+    qtbot.wait_exposed(test_ui.ui)
+    test_image_path = os.path.join(os.path.dirname(__file__), "test_image_360x360.png")
+    test_image_path = test_image_path
+    picker = test_ui.ui.content.image_picker
+    color = test_ui.ui.content.color_picker
+    picker.load_image(test_image_path)
+    picker.update()
+    qtbot.wait_exposed(picker)
+    qtbot.addWidget(picker)
+    assert color.name_label.text() == "Lime"
+    test_image_path = os.path.join(os.path.dirname(__file__), "gradient.png")
+    test_image_path = test_image_path
+    picker.load_image(test_image_path)
+    assert color.name_label.text() == "Darkslategray"
