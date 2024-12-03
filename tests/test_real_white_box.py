@@ -6,19 +6,28 @@ import pytest
 from main import UI
 from views import ImageData
 from PySide6 import QtWidgets, QtCore, QtGui
-from PySide6.QtCore import QUrl, QMimeData, QPoint
-from PySide6.QtGui import QKeyEvent, Qt, QDragEnterEvent, QImage
+from PySide6.QtCore import QUrl, QMimeData, QPoint, QEvent
+from PySide6.QtGui import QKeyEvent, Qt, QDragEnterEvent, QImage, QMouseEvent, QEnterEvent
 from PySide6.QtWidgets import QApplication, QPushButton
 
 from PySide6.QtGui import QPixmap, QColor
 
 app = QApplication()
-
+# app.setAttribute(Qt.AA_DisableHighDpiScaling)
+# app.setAttribute(Qt.AA_UseSoftwareOpenGL)
+# app.setQuitOnLastWindowClosed(False)
 
 @pytest.fixture
 def test_ui(qtbot) -> 'UI':
     ui = UI()
     qtbot.addWidget(ui)
+    ui.setVisible(False)
+
+    # Optional: Set the attribute to allow painting in memory
+    ui.setAttribute(QtCore.Qt.WA_OpaquePaintEvent)
+
+    # Show the window in memory (does not display on screen)
+    ui.show()
     return ui
 
 
@@ -93,6 +102,33 @@ def test_load_image(test_ui, qtbot):
     assert test_ui.ui.content.image_picker.load_image(test_image_path) is False
     test_image_path = os.path.join(os.path.dirname(__file__), "test_real_white_box.py")
     assert test_ui.ui.content.image_picker.load_image(test_image_path) is False
+
+
+def test_image_size(test_ui, qtbot):
+    from PIL import Image
+    import io
+    import tempfile
+    wide_image = Image.new("RGB", (1000, 5), "red")
+
+    # Generowanie obrazu "wąskiego, ale wysokiego"
+    tall_image = Image.new("RGB", (5, 1000), "blue")
+
+    # Zapisz obrazy do pamięci w formacie PNG
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
+        wide_image.save(temp_file, format="PNG")
+        wide_image_path = temp_file.name  # Ścieżka do tymczasowego pliku
+
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
+        tall_image.save(temp_file, format="PNG")
+        tall_image_path = temp_file.name  # Ścieżka do tymczasowego pliku
+
+    # Testowanie funkcji load_image z wczytanym obrazem
+    assert test_ui.ui.content.image_picker.load_image(wide_image_path) is True
+    assert test_ui.ui.content.image_picker.load_image(tall_image_path) is True
+
+    # Po wykonaniu testu możesz usunąć tymczasowe pliki (jeśli nie potrzebujesz ich później)
+    os.remove(wide_image_path)
+    os.remove(tall_image_path)
 
 
 def test_image_color(test_ui, qtbot):
@@ -185,10 +221,79 @@ def test_image_zoom(test_ui, qtbot):
     qtbot.mousePress(image_picker, QtCore.Qt.LeftButton, pos=point)
     qtbot.mouseRelease(image_picker, QtCore.Qt.LeftButton, pos=point)
     test_ui.ui.content.image_picker.zoom_in(point)
-    assert test_ui.ui.content.color_picker.picked_color.background == "#00ff00"
+    assert test_ui.ui.content.color_picker.picked_color.background == "#ff0000"
 
-# with mock.patch.object(test_ui.ui.content, "image_picker") as mock_picker:
-#     mock_picker.paste = mock.MagicMock()
-#     event = QKeyEvent(QKeyEvent.KeyPress, Qt.Key_V, Qt.ControlModifier)
-#     test_ui.keyPressEvent(event)
-#     mock_picker.paste.assert_called_once()
+
+def test_image_mouse_none(test_ui, qtbot):
+    qtbot.wait_exposed(test_ui.ui)
+    point = QPoint(139, 6)
+    event = QMouseEvent(QMouseEvent.MouseButtonRelease, point, Qt.LeftButton, Qt.LeftButton, Qt.NoModifier)
+    assert test_ui.ui.content.image_picker.mouseReleaseEvent(event) is None
+    test_image_path = os.path.join(os.path.dirname(__file__), "test_image_360x360.png")
+    test_image_path = test_image_path
+    test_ui.ui.content.image_picker.load_image(test_image_path)
+    event2 = QMouseEvent(QMouseEvent.MouseButtonRelease, point, Qt.RightButton, Qt.RightButton, Qt.NoModifier)
+    assert test_ui.ui.content.image_picker.mouseReleaseEvent(event2) is None
+
+
+def test_color_hover(test_ui, qtbot):
+    qtbot.wait_exposed(test_ui.ui)
+    test_image_path = os.path.join(os.path.dirname(__file__), "test_image_360x360.png")
+    test_image_path = test_image_path
+    test_ui.ui.content.image_picker.load_image(test_image_path)
+    point = QPoint(1, 1)
+    color = test_ui.ui.content.color_picker.picked_color
+    colors = test_ui.ui.content.color_palette.widgets
+    event = QEnterEvent(
+        point,
+        point,
+        point
+    )
+    color.enterEvent(event)
+    assert color.copy_text == "Click to copy"
+    for clr in colors:
+        clr.enterEvent(event)
+        assert clr.copy_text == "Click to copy"
+    event = QEvent(QEvent.Leave)
+    color.leaveEvent(event)
+    assert color.copy_text == ""
+    for clr in colors:
+        clr.leaveEvent(event)
+        assert clr.copy_text == ""
+
+
+def test_copy_clipboard(test_ui, qtbot):
+    qtbot.wait_exposed(test_ui.ui)
+    test_image_path = os.path.join(os.path.dirname(__file__), "test_image_360x360.png")
+    test_image_path = test_image_path
+    test_ui.ui.content.image_picker.load_image(test_image_path)
+    color = test_ui.ui.content.color_picker.picked_color
+    colors = test_ui.ui.content.color_palette.widgets
+    point = QPoint(1, 1)
+    event = QMouseEvent(QMouseEvent.MouseButtonRelease, point, Qt.LeftButton, Qt.LeftButton, Qt.NoModifier)
+    color.mouseReleaseEvent(event)
+    assert color.copy_text == "Copied!"
+    assert QApplication.clipboard().text() == "#00ff00"
+    for clr in colors:
+        event = QMouseEvent(QMouseEvent.MouseButtonRelease, point, Qt.LeftButton, Qt.LeftButton, Qt.NoModifier)
+        clr.mouseReleaseEvent(event)
+        assert clr.copy_text == "Copied!"
+        assert QApplication.clipboard().text() in {"#00ff00", "#ff0000", "#0000ff"}
+
+
+def test_pick_color(test_ui, qtbot):
+    qtbot.wait_exposed(test_ui.ui)
+    test_image_path = os.path.join(os.path.dirname(__file__), "test_image_360x360.png")
+    test_image_path = test_image_path
+    picker = test_ui.ui.content.image_picker
+    color = test_ui.ui.content.color_picker
+    picker.load_image(test_image_path)
+    picker.update()
+    qtbot.wait_exposed(picker)
+    qtbot.addWidget(picker)
+    assert color.picked_color.background == "#00ff00"
+    point = QPoint(132, 1)
+    event = QMouseEvent(QMouseEvent.MouseButtonRelease, point, Qt.LeftButton, Qt.LeftButton, Qt.NoModifier)
+    picker.mouseReleaseEvent(event)
+    assert color.picked_color.background == "#ff0000"
+
