@@ -7,6 +7,10 @@ from PySide6.QtCore import QUrl
 from PySide6.QtGui import QKeyEvent, Qt
 from PySide6.QtWidgets import QApplication, QPushButton
 
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from main import UI  # Przykład z Twoją klasą UI
 
 
@@ -88,3 +92,12 @@ def test_button_click(test_ui, qtbot):
     with mock.patch.object(QFileDialog, "getOpenFileName", return_value=("test_image.png", "")) as mock_dialog:
         qtbot.mouseClick(button, QtCore.Qt.LeftButton)
         mock_dialog.assert_called_once()
+
+
+def test_zoom_button_ui_change(test_ui, qtbot):
+    button = test_ui.ui.content.zoom_image.zoom
+    image_before = test_ui.ui.content.zoom_image.image
+    qtbot.mouseClick(button, Qt.LeftButton)
+    assert image_before !=  test_ui.ui.content.zoom_image.image
+
+

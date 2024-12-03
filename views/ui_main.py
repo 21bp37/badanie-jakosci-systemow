@@ -128,6 +128,10 @@ class ImagePicker(QWidget):
         """Initialize class instance"""
         self.setAcceptDrops(True)  # accepts file drops.
         self.setMouseTracking(True)  # allows receiving mouse position
+        # Needed for zoom functionality 
+        self.zoomed_in = False
+        self.clicked_zoom = False
+       
         self._pixmap = None
         self.widget_layout = QGridLayout(self)
         self.sgn = Communicate()
@@ -159,6 +163,7 @@ class ImagePicker(QWidget):
                     break
 
     def paste(self) -> None:
+        self.zoomed_in = False
         """Gets pasted image from clipboard."""
         clipboard = QApplication.clipboard()
         md = clipboard.mimeData()
@@ -178,12 +183,50 @@ class ImagePicker(QWidget):
                 if self.load_image(img):
                     break
 
+    def zoom_in(self, click_position):
+        # Get the coordinates of the click
+        x = click_position.x()
+        y = click_position.y()
+
+        # Map the coordinates to the pixmap's coordinate system
+        scaled_pixmap = self.pixmap
+        if scaled_pixmap:
+            print(x, y)
+            scale_x = self.pixmap.width() / self.width()
+            scale_y = self.pixmap.height() / self.height()
+            image_x = int(x * scale_x)
+            image_y = int(y * scale_y)
+
+            # Define the size of the zoomed-in region (e.g., 50x50 pixels)
+            zoom_width, zoom_height = 100, 100
+            half_width, half_height = zoom_width // 2, zoom_height // 2
+
+            # Ensure the zoom region does not exceed image bounds
+            x_start = max(0, image_x - half_width)
+            y_start = max(0, image_y - half_height)
+            x_end = min(self.pixmap.width(), image_x + half_width)
+            y_end = min(self.pixmap.height(), image_y + half_height)
+
+            # Crop the zoomed region
+            cropped_region = self.pixmap.copy(x_start, y_start, x_end - x_start, y_end - y_start)
+
+            # Scale up the cropped region to match the label's size
+            zoomed_pixmap = cropped_region.scaled(self.size())
+
+            # Set the zoomed pixmap
+            self.pixmap = zoomed_pixmap
+
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         """Pick color on mouse release"""
         super().mouseReleaseEvent(event)
         # return if there's no pixmap or event wasn't caused by mouse left click
         if not self.pixmap:
             return
+        #zooming in
+        if self.clicked_zoom and not self.zoomed_in:
+            self.zoom_in(event.pos())
+            self.zoomed_in = True
+
         if event.button() != QtCore.Qt.LeftButton:
             return
         x = event.localPos().x()
@@ -207,6 +250,7 @@ class ImagePicker(QWidget):
     def load_image(self, url: str) -> bool:
         """Method that handles image upload"""
         try:
+            self.zoomed_in = False
             with Image.open(url) as im:
                 """Pill Image verify"""
                 im.verify()
@@ -370,13 +414,123 @@ class ColorWidget(QWidget):
         # 133 == int(QtCore.Qt.AlignCenter | QtCore.Qt.AlignLeft)
         painter.end()
 
+class ZoomWidget(QWidget):
+    def __init__(self, parent: QObject = None, **kwargs) -> None:
+        super(ZoomWidget, self).__init__(parent=parent, **kwargs)
+        """Initialize ZoomWidget"""
+        self.zoomed_in = False
+        self.clicked_zoom = False
+        self.text_color = QColor(0, 0, 0, 255)
+        self.background = self.palette().base().color().name()
+        self.setCursor(QtCore.Qt.PointingHandCursor)
+        self.setMouseTracking(True)
+        self.zoom_text = ''
+        
+        self.helper_size = 8
+
+
+    def mouseMoveEvent(self, event: QMouseEvent) -> None:
+        super().mouseMoveEvent(event)
+
+    def enterEvent(self, event: QEnterEvent) -> None:
+        super().enterEvent(event)
+        self.zoom_text = 'Click to turn on zoom'
+        self.repaint()
+
+    def leaveEvent(self, event: QEvent) -> None:
+        super().leaveEvent(event)
+        self.zoom_text = ''
+        self.repaint()
+    
+    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
+        if self.clicked_zoom:
+            self.clicked_zoom = False
+        else:
+            self.clicked_zoom = True
+
+    
+    def paintEvent(self, event: QPaintEvent) -> None:
+        """
+        It's recommended to reimplement paintEvent()
+        A paint event is a request to repaint all or part of a widget.
+        """
+        opt = QStyleOption()
+        opt.initFrom(self)
+        painter = QPainter(self)
+        self.style().drawPrimitive(QStyle.PE_Widget, opt, painter, self)
+
+        
+        painter.end()
+    
+
+
+class ZoomImage(QWidget):
+    def __init__(self, parent:QObject = None, **kwargs) -> None:
+        super(ZoomImage, self).__init__(parent=parent, **kwargs)
+        """Initialize ZoomImage"""
+        self.zoom_widget = QWidget(self)
+
+        self.zoom = ZoomWidget(self.zoom_widget)
+        self.zoom.setObjectName('ZoomWidget')
+        self.zoom.setCursor(QtCore.Qt.PointingHandCursor)
+        self.zoom.setMinimumHeight(85)
+        self.zoom.setMinimumWidth(85)
+
+        self.zoom.helper_size = 10
+        
+
+        self.widget_layout = QVBoxLayout(self)
+        self.widget_layout.setContentsMargins(0, 0, 0, 0)
+        self.widget_layout.setSpacing(0)
+        self.widget_layout.setAlignment(QtCore.Qt.AlignTop)
+        self.widget_layout.addWidget(self.zoom)
+        self.widget_layout.setAlignment(QtCore.Qt.AlignCenter)
+        
+        self.image_path_z_not_clicked = "assets/Zoom_in_not_clicked.png"
+        self.image_path_z_clicked = "assets/Zoom_in_clicked.png"
+
+
+        self.__set_size_policy()
+
+    def __set_size_policy(self):
+        """Sets layout size policy"""
+        self.setMaximumWidth(300)
+        self.setMinimumWidth(120)
+        self.widget_layout.setSpacing(0)
+
+
+    def paintEvent(self, event: QPaintEvent) -> None:
+        """
+        It's recommended to reimplement paintEvent()
+        A paint event is a request to repaint all or part of a widget.
+        """
+        opt = QStyleOption()
+        opt.initFrom(self)
+        painter = QPainter(self)
+        self.style().drawPrimitive(QStyle.PE_Widget, opt, painter, self)
+        # Select image to draw
+        if self.zoom.clicked_zoom == True:
+            self.image = QPixmap(self.image_path_z_clicked)
+        else:
+            self.image = QPixmap(self.image_path_z_not_clicked)
+            
+        self.image = self.image.scaled(self.zoom.size())
+        # Draw the image (centered in the widget)
+        if not self.image.isNull():
+            image_rect = self.zoom.rect() 
+            image_rect.setWidth(self.image.width()) 
+            image_rect.setHeight(self.image.height())
+            image_rect.moveCenter(self.rect().center()) 
+            painter.drawPixmap(image_rect, self.image) 
+
+        painter.end()
+
+
 
 class ColorPalette(QWidget):
     def __init__(self, parent: QObject = None, **kwargs) -> None:
         super(ColorPalette, self).__init__(parent=parent, **kwargs)
         """Initialize ColorPalette"""
-        self.setMaximumHeight(128)
-        self.setMinimumHeight(68)
         self.palette_label = QLabel(self)
         self.palette_label.setText('Color Palette')
         self.palette_label.setAlignment(QtCore.Qt.AlignCenter)
@@ -439,17 +593,28 @@ class Content(QWidget):
         super(Content, self).__init__(parent=parent, *args, **kwargs)
         """Initialize widgets"""
         self.widget_layout = QVBoxLayout(self)
+        self.content_test = "test"
+        """Top widget"""
         self.widget_top = QWidget(self)
         self.widget_top.layout = QHBoxLayout(self.widget_top)
         self.image_picker = ImagePicker(self.widget_top)
         self.color_picker = ColorPicker(self.widget_top)
         self.widget_top.layout.addWidget(self.image_picker)
         self.widget_top.layout.addWidget(self.color_picker)
+        
+        "Bottom widget"
+        self.widget_bottom = QWidget(self)
+        self.widget_bottom.setMaximumHeight(128)
+        self.widget_bottom.setMinimumHeight(68)
+        self.widget_bottom.layout = QHBoxLayout(self.widget_bottom)
+        self.color_palette = ColorPalette(self.widget_bottom)  # color palette
+        self.zoom_image = ZoomImage(self.widget_bottom)
+        self.widget_bottom.layout.addWidget(self.color_palette)
+        self.widget_bottom.layout.addWidget(self.zoom_image)
 
         """Layout size policy"""
-        self.color_palette = ColorPalette(self)  # color palette
         self.widget_layout.addWidget(self.widget_top)
-        self.widget_layout.addWidget(self.color_palette)
+        self.widget_layout.addWidget(self.widget_bottom)
         self.__set_size_policy()
 
         """Signals"""
@@ -473,6 +638,7 @@ class Content(QWidget):
         r, g, b = palette[0]  # get the most common color
         self.color_picker.update_color(r, g, b)  # set picked color to most common one
 
+
     def __set_size_policy(self):
         """sets size policy"""
         vertical_policy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
@@ -481,23 +647,27 @@ class Content(QWidget):
         self.widget_top.setSizePolicy(vertical_policy)
 
         vertical_policy.setVerticalStretch(30)
-        self.color_palette.setSizePolicy(vertical_policy)
+        self.widget_bottom.setSizePolicy(vertical_policy)
         # 70:30 proportion
 
         horizontal_policy = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.MinimumExpanding)
+        
         horizontal_policy.setHorizontalStretch(75)  # 75:25 proportion
-
         self.image_picker.setSizePolicy(horizontal_policy)
+        self.color_palette.setSizePolicy(horizontal_policy)
 
         horizontal_policy.setHorizontalStretch(25)
         self.color_picker.setSizePolicy(horizontal_policy)
+        self.zoom_image.setSizePolicy(horizontal_policy)
 
     def paintEvent(self, event: QPaintEvent) -> None:
-        """
-        Reimplement paintEvent() method
-        It's recommended to reimplement paintEvent()
-        A paint event is a request to repaint all or part of a widget.
-        """
+        # Passing data to image picker class
+        self.image_picker.clicked_zoom = self.zoom_image.zoom.clicked_zoom
+
+        if self.image_picker.zoomed_in:
+            self.zoom_image.zoom.clicked_zoom = False
+        
+
         opt = QStyleOption()
         opt.initFrom(self)
         painter = QPainter(self)
