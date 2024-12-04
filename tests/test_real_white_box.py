@@ -49,12 +49,11 @@ def test_imageData_get_colors_single_color_pixmap(r, g, b):
 
 
 @pytest.mark.parametrize("imagePath, output", [
-    ('./tests/test_image_360x360.png', [[0, 255, 0], [255, 0, 0], [0, 0, 255]]),
-
+    ('test_image_360x360.png', [[0, 255, 0], [255, 0, 0], [0, 0, 255]]),
+    ('test_image_900x900_3Colors.png', [[0, 0, 255], [255, 0, 0], [143, 0, 112]])
 ])
 def test_imageData_get_colors_pixmap_from_file(imagePath, output):
-    pixmap = QPixmap(imagePath)
-    assert pixmap.isNull() is False
+    pixmap = QPixmap(os.path.join(os.path.dirname(__file__), imagePath))
     imageData = ImageData(pixmap)
     colors = imageData.get_colors()
     assert len(colors) == len(output)
@@ -70,7 +69,7 @@ def test_imageData_get_colors_pixmap_from_file(imagePath, output):
     ('0', 'F'),
     ('FFFFFFFFFFFF', '000000000000'),
 ])
-def test_imageData_get_colors_pixmap_from_file(input, output):
+def test_invert_color_method(input, output):
     inversedInput = ImageData.invert_color(input)
     assert inversedInput == output
 
