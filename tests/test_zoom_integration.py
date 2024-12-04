@@ -12,15 +12,13 @@ import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from main import UI  # Przykład z Twoją klasą UI
+from main import UI
 
 
 @pytest.fixture
 def test_ui(qtbot) -> 'UI':
-    """Fixture przygotowujące aplikację i UI."""
-    # Używamy qtbot do automatycznego stworzenia aplikacji
-    ui = UI()  # QApplication jest tworzona automatycznie przez qtbot
-    qtbot.addWidget(ui)  # Rejestrujemy widget w qtbot
+    ui = UI()
+    qtbot.addWidget(ui)
     return ui
 
 
@@ -80,7 +78,7 @@ def test_zoom_pixel_value(test_ui, qtbot):
     qtbot.mouseClick(image_picker, Qt.LeftButton, pos=click_point)
     # Save picked color
     picked_color_b4_zoom = color_widget.text_color
-    
+
     # simulating zoom
     #Zoom button
     button = test_ui.ui.content.zoom_image.zoom

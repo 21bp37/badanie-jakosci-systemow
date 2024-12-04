@@ -24,11 +24,8 @@ def test_ui(qtbot) -> 'UI':
     ui = UI()
     qtbot.addWidget(ui)
     ui.setVisible(False)
-
-    # Optional: Set the attribute to allow painting in memory
     ui.setAttribute(QtCore.Qt.WA_OpaquePaintEvent)
 
-    # Show the window in memory (does not display on screen)
     ui.show()
     return ui
 
@@ -111,23 +108,18 @@ def test_image_size(test_ui, qtbot):
     import tempfile
     wide_image = Image.new("RGB", (1000, 5), "red")
 
-    # Generowanie obrazu "wąskiego, ale wysokiego"
     tall_image = Image.new("RGB", (5, 1000), "blue")
 
-    # Zapisz obrazy do pamięci w formacie PNG
     with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
         wide_image.save(temp_file, format="PNG")
-        wide_image_path = temp_file.name  # Ścieżka do tymczasowego pliku
+        wide_image_path = temp_file.name
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
         tall_image.save(temp_file, format="PNG")
-        tall_image_path = temp_file.name  # Ścieżka do tymczasowego pliku
-
-    # Testowanie funkcji load_image z wczytanym obrazem
+        tall_image_path = temp_file.name
     assert test_ui.ui.content.image_picker.load_image(wide_image_path) is True
     assert test_ui.ui.content.image_picker.load_image(tall_image_path) is True
 
-    # Po wykonaniu testu możesz usunąć tymczasowe pliki (jeśli nie potrzebujesz ich później)
     os.remove(wide_image_path)
     os.remove(tall_image_path)
 

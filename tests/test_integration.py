@@ -12,7 +12,7 @@ import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from main import UI  # Przykład z Twoją klasą UI
+from main import UI
 
 
 @pytest.fixture
@@ -25,7 +25,7 @@ def test_ui(qtbot) -> 'UI':
 def test_ctrl_v_functionality(test_ui, qtbot):
     qtbot.wait_exposed(test_ui.ui)
     with mock.patch.object(test_ui.ui.content, "image_picker") as mock_picker:
-        mock_picker.paste = mock.MagicMock()  # Zastępujemy paste() mockiem
+        mock_picker.paste = mock.MagicMock()
         event = QKeyEvent(QKeyEvent.KeyPress, Qt.Key_V, Qt.ControlModifier)  # noqa
         test_ui.keyPressEvent(event)
         mock_picker.paste.assert_called_once()

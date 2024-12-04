@@ -12,12 +12,12 @@ signal.signal(signal.SIGINT, signal.SIG_DFL)
 class UI(QMainWindow):
     def __init__(self, app=None, *args, **kwargs) -> None:
         super(UI, self).__init__(*args, **kwargs)
-        self.setWindowTitle("Pisklak")
-        self.setWindowIcon(QIcon("./assets/images/icon3.png"))  # nie ma jeszcze ikonki
+        self.setWindowTitle("apka")
+        self.setWindowIcon(QIcon("./assets/images/icon3.png"))
         if app:
-            size = app.primaryScreen().size() * 0.6  # jakies skalowanie na ekranie
+            size = app.primaryScreen().size() * 0.6
             self.resize(size)
-        self.setMinimumSize(620, 344)  # min rozmiar jakis zeby sie nie rozkraczalo
+        self.setMinimumSize(620, 344)
         self.ui:'UiMainWindow' = UiMainWindow(self)
         self.setCentralWidget(self.ui)
 
